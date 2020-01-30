@@ -37,11 +37,23 @@ var isEven = function (n) {
 // sumBelow(10); // 45
 // sumBelow(7); // 21
 var sumBelow = function (n) {
+    if (n === 0) return 0;
+    if (n > 0) {
+        return n - 1 + sumBelow(n - 1);
+    } else {
+        return n + 1 + sumBelow(n + 1);
+    }
 };
 
 // 6. Get the integers within a range (x, y).
 // range(2,9); // [3,4,5,6,7,8]
 var range = function (x, y) {
+    if (Math.abs(x - y) <= 1) return [];
+    if (x < y) {
+        return [x+1].concat(range(x + 1, y));
+    } else {
+        return [x-1].concat(range(x - 1, y));
+    }
 };
 
 // 7. Compute the exponent of a number.
@@ -50,6 +62,9 @@ var range = function (x, y) {
 // exponent(4,3); // 64
 // https://www.khanacademy.org/computing/computer-science/algorithms/recursive-algorithms/a/computing-powers-of-a-number
 var exponent = function (base, exp) {
+    if (exp === 0) return 1;
+    if (exp < 0) return 1 / exponent(base, -exp); 
+    return base * exponent(base, --exp);
 };
 
 // 8. Determine if a number is a power of two.
@@ -57,14 +72,22 @@ var exponent = function (base, exp) {
 // powerOfTwo(16); // true
 // powerOfTwo(10); // false
 var powerOfTwo = function (n) {
+    if (!Number.isInteger(n) || n === 0) return false;
+    if (n === 1) return true;
+    return powerOfTwo(n / 2);
 };
 
 // 9. Write a function that reverses a string.
 var reverse = function (string) {
+    if (string.length === 0) return "";
+    return reverse(string.slice(1)) + string[0];
 };
 
 // 10. Write a function that determines if a string is a palindrome.
 var palindrome = function (string) {
+    if (string.length <= 1) return true;
+    if (string[0].toLowerCase() !== string[string.length - 1].toLowerCase()) return false;
+    return palindrome(string.slice(1,-1));
 };
 
 // 11. Write a function that returns the remainder of x divided by y without using the
@@ -73,16 +96,29 @@ var palindrome = function (string) {
 // modulo(17,5) // 2
 // modulo(22,6) // 4
 var modulo = function (x, y) {
+    if (y === 0) return NaN;
+    else if (y < 0) return modulo(x, -y);
+    else if (x < 0) return -modulo(-x, y);
+    else if (x < y) return x;
+    else return modulo(x - y, y);
 };
 
 // 12. Write a function that multiplies two numbers without using the * operator or
 // Math methods.
 var multiply = function (x, y) {
+    if (y === 0) return 0;
+    if (y < 0) return -multiply(x, -y);
+    return x + multiply(x, --y);
 };
 
 // 13. Write a function that divides two numbers without using the / operator or
 // Math methods to arrive at an approximate quotient (ignore decimal endings).
 var divide = function (x, y) {
+    if (y === 0) return NaN;
+    else if (x < 0) return -divide(-x, y);
+    else if (y < 0) return -divide(x, -y);
+    else if (x < y) return 0;
+    else return 1 + divide(x - y, y);
 };
 
 // 14. Find the greatest common divisor (gcd) of two positive numbers. The GCD of two
@@ -91,6 +127,10 @@ var divide = function (x, y) {
 // http://www.cse.wustl.edu/~kjg/cse131/Notes/Recursion/recursion.html
 // https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
 var gcd = function (x, y) {
+    if (x < 0 || y < 0) return null;
+    if (y > x) return gcd(y, x);
+    if (y === 0) return x;
+    return gcd(y, modulo(x, y));
 };
 
 // 15. Write a function that compares each character of two strings and returns true if
@@ -98,21 +138,30 @@ var gcd = function (x, y) {
 // compareStr('house', 'houses') // false
 // compareStr('tomato', 'tomato') // true
 var compareStr = function (str1, str2) {
+    if (str1.length === 0 && str2.length === 0) return true;
+    if (str1[0] !== str2[0]) return false;
+    return compareStr(str1.slice(1), str2.slice(1));
 };
 
 // 16. Write a function that accepts a string and creates an array where each letter
 // occupies an index of the array.
 var createArray = function (str) {
+    if (str.length === 0) return [];
+    return [str[0]].concat(createArray(str.slice(1)));
 };
 
 // 17. Reverse the order of an array
 var reverseArr = function (array) {
+    if (array.length === 0) return [];
+    return reverseArr(array.slice(1)).concat(array[0]);
 };
 
 // 18. Create a new array with a given value and length.
 // buildList(0,5) // [0,0,0,0,0]
 // buildList(7,3) // [7,7,7]
 var buildList = function (value, length) {
+    if (length === 0) return [];
+    return [value].concat(buildList(value, --length));
 };
 
 // 19. Implement FizzBuzz. Given integer n, return an array of the string representations of 1 to n.
@@ -121,17 +170,29 @@ var buildList = function (value, length) {
 // For numbers which are multiples of both three and five, output “FizzBuzz” instead of the number.
 // fizzBuzz(5) // ['1','2','Fizz','4','Buzz']
 var fizzBuzz = function (n) {
+    if (n === 0) return [];
+    var strRep;
+    if (n % 3 === 0 && n % 5 === 0) strRep = ['FizzBuzz'];
+    else if (n % 3 === 0) strRep = ['Fizz'];
+    else if (n % 5 === 0) strRep = ['Buzz'];
+    else strRep = ['' + n];
+    return fizzBuzz(n-1).concat(strRep)
 };
 
 // 20. Count the occurence of a value in a list.
 // countOccurrence([2,7,4,4,1,4], 4) // 3
 // countOccurrence([2,'banana',4,4,1,'banana'], 'banana') // 2
 var countOccurrence = function (array, value) {
+    if (array.length === 0) return 0;
+    return (array[0] === value ? 1 : 0) + countOccurrence(array.slice(1), value);
 };
 
 // 21. Write a recursive version of map.
 // rMap([1,2,3], timesTwo); // [2,4,6]
 var rMap = function (array, callback) {
+    if (array.length === 0) return [];
+    return [callback(array[0])]
+            .concat(rMap(array.slice(1), callback));
 };
 
 // 22. Write a function that counts the number of times a key occurs in an object.
@@ -139,6 +200,16 @@ var rMap = function (array, callback) {
 // countKeysInObj(obj, 'r') // 1
 // countKeysInObj(obj, 'e') // 2
 var countKeysInObj = function (obj, key) {
+    var count = 0;
+    for (var k in obj) {
+        if (k === key) {
+            count++;
+        }
+        if (typeof obj[k] === 'object') {
+            count += countKeysInObj(obj[k], key);
+        }
+    }
+    return count;
 };
 
 // 23. Write a function that counts the number of times a value occurs in an object.
@@ -146,11 +217,31 @@ var countKeysInObj = function (obj, key) {
 // countValuesInObj(obj, 'r') // 2
 // countValuesInObj(obj, 'e') // 1
 var countValuesInObj = function (obj, value) {
+    var count = 0;
+    for (var k in obj) {
+        if (obj[k] === value) {
+            count++;
+        }
+        if (typeof obj[k] === 'object') {
+            count += countValuesInObj(obj[k], value);
+        }
+    }
+    return count;
 };
 
 // 24. Find all keys in an object (and nested objects) by a provided name and rename
 // them to a provided new name while preserving the value stored at that key.
 var replaceKeysInObj = function (obj, oldKey, newKey) {
+    for (var k in obj) {
+        if (typeof obj[k] === 'object') {
+            replaceKeysInObj(obj[k], oldKey, newKey);
+        }
+        if (k === oldKey) {
+            obj[newKey] = obj[k];
+            delete obj[k];
+        }
+    }
+    return obj;
 };
 
 // 25. Get the first n Fibonacci numbers. In the Fibonacci sequence, each subsequent
@@ -159,6 +250,12 @@ var replaceKeysInObj = function (obj, oldKey, newKey) {
 // fibonacci(5); // [0,1,1,2,3,5]
 // Note: The 0 is not counted.
 var fibonacci = function (n) {
+    if (n <= 0) return null;
+    if (n === 1) return [0, 1];
+    var fb = fibonacci(n - 1);
+    return fb.concat([
+        fb[fb.length - 1] + fb[fb.length - 2]
+    ]);
 };
 
 // 26. Return the Fibonacci number located at index n of the Fibonacci sequence.
@@ -167,17 +264,27 @@ var fibonacci = function (n) {
 // nthFibo(7); // 13
 // nthFibo(3); // 2
 var nthFibo = function (n) {
+    if (n < 0) return null;
+    if (n === 0) return 0;
+    if (n === 1) return 1;
+    return nthFibo(n - 1) + nthFibo(n - 2);
 };
 
 // 27. Given an array of words, return a new array containing each word capitalized.
 // var words = ['i', 'am', 'learning', 'recursion'];
 // capitalizedWords(words); // ['I', 'AM', 'LEARNING', 'RECURSION']
 var capitalizeWords = function (array) {
+    if (array.length === 0) return [];
+    return [array[0].toUpperCase()]
+        .concat(capitalizeWords(array.slice(1)));
 };
 
 // 28. Given an array of strings, capitalize the first letter of each index.
 // capitalizeFirst(['car','poop','banana']); // ['Car','Poop','Banana']
 var capitalizeFirst = function (array) {
+    if (array.length === 0) return [];
+    return [array[0][0].toUpperCase() + array[0].slice(1)]
+        .concat(capitalizeFirst(array.slice(1)));
 };
 
 // 29. Return the sum of all even numbers in an object containing nested objects.
@@ -190,16 +297,37 @@ var capitalizeFirst = function (array) {
 // };
 // nestedEvenSum(obj1); // 10
 var nestedEvenSum = function (obj) {
+    var sum = 0;
+    for (var k in obj) {
+        if (typeof obj[k] === 'number' && obj[k] % 2 === 0) {
+            sum += obj[k];
+        } else if (typeof obj[k] === 'object') {
+            sum += nestedEvenSum(obj[k]);
+        }
+    }
+    return sum;
 };
 
 // 30. Flatten an array containing nested arrays.
 // flatten([1,[2],[3,[[4]]],5]); // [1,2,3,4,5]
 var flatten = function (array) {
+    if (array.length === 0) return [];
+    if (Array.isArray(array[0])) {
+        return flatten(array[0]).concat(flatten(array.slice(1)));;
+    } else {
+        return [array[0]].concat(flatten(array.slice(1)));;
+    }
 };
+
 
 // 31. Given a string, return an object containing tallies of each letter.
 // letterTally('potato'); // {p:1, o:2, t:2, a:1}
 var letterTally = function (str, obj) {
+    if (obj === undefined) obj = {};
+    if (str.length === 0) return obj;
+    if (!obj.hasOwnProperty(str[0])) obj[str[0]] = 0;
+    ++obj[str[0]];
+    return letterTally(str.slice(1), obj);
 };
 
 // 32. Eliminate consecutive duplicates in a list. If the list contains repeated
@@ -208,18 +336,30 @@ var letterTally = function (str, obj) {
 // compress([1,2,2,3,4,4,5,5,5]) // [1,2,3,4,5]
 // compress([1,2,2,3,4,4,2,5,5,5,4,4]) // [1,2,3,4,2,5,4]
 var compress = function (list) {
+    if (list.length === 1) return [list[0]];
+    var comp = compress(list.slice(1));
+    if (list[0] !== comp[0]) comp = [list[0]].concat(comp);
+    return comp;
 };
 
 // 33. Augment every element in a list with a new value where each element is an array
 // itself.
 // augmentElements([[],[3],[7]], 5); // [[5],[3,5],[7,5]]
 var augmentElements = function (array, aug) {
+    if (array.length === 0) return;
+    array[0].push(aug);
+    augmentElements(array.slice(1), aug);
+    return array;
 };
 
 // 34. Reduce a series of zeroes to a single 0.
 // minimizeZeroes([2,0,0,0,1,4]) // [2,0,1,4]
 // minimizeZeroes([2,0,0,0,1,0,0,4]) // [2,0,1,0,4]
 var minimizeZeroes = function (array) {
+    if (array.length === 1) return [array[0]];
+    var comp = minimizeZeroes(array.slice(1));
+    if (comp[0] !== 0 || array[0] !== 0) comp = [array[0]].concat(comp);
+    return comp;
 };
 
 // 35. Alternate the numbers in an array between positive and negative regardless of
@@ -227,12 +367,55 @@ var minimizeZeroes = function (array) {
 // alternateSign([2,7,8,3,1,4]) // [2,-7,8,-3,1,-4]
 // alternateSign([-2,-7,8,3,-1,4]) // [2,-7,8,-3,1,-4]
 var alternateSign = function (array) {
+    if (array.length === 1) return [Math.abs(array[0])];
+    var signed = alternateSign(array.slice(0, -1))
+                .concat(Math.abs([array[array.length - 1]]))
+    if (signed[signed.length - 2] > 0) {
+        signed[signed.length - 1] *= -1;
+    }
+    return signed;
 };
 
 // 36. Given a string, return a string with digits converted to their word equivalent.
 // Assume all numbers are single digits (less than 10).
 // numToText("I have 5 dogs and 6 ponies"); // "I have five dogs and six ponies"
 var numToText = function (str) {
+    if (str.length === 0) return '';
+    var c = str[0];
+    console.log(c);
+    switch (c) {
+        case '0':
+            c = 'zero'
+            break;
+        case '1':
+            c = 'one'
+            break;
+        case '2':
+            c = 'two'
+            break;
+        case '3':
+            c = 'three'
+            break;
+        case '4':
+            c = 'four'
+            break;
+        case '5':
+            c = 'five'
+            break;
+        case '6':
+            c = 'six'
+            break;
+        case '7':
+            c = 'seven'
+            break;
+        case '8':
+            c = 'eight'
+            break;
+        case '9':
+            c = 'nine'
+            break;
+    }
+    return c + numToText(str.slice(1));
 };
 
 
